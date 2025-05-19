@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monaco Editor - Web IDE</title>
+    <!-- Our custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/intellisense-custom.css">
+    <!-- Load Monaco Editor from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.js"></script>
+    
+    <!-- Global configuration for Python LSP -->
+    <script>
+        // Configure Python LSP settings
+        window.pythonLSPConfig = {
+            serverUrl: 'ws://localhost:2090',
+            pythonPath: 'python',
+            venvPath: '',
+            extraPaths: [],
+            typeCheckingMode: 'basic'
+        };
+    </script>
+    <!-- Add error handling script -->
+    <script>
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.error('Global error:', {msg, url, lineNo, columnNo, error});
+            const errorContainer = document.getElementById('error-container');
+            if (errorContainer) {
+                errorContainer.innerHTML = `
+                    <div class="error-message">
+                        <h3>An error occurred</h3>
+                        <p>${msg}</p>
+                        <p>Location: ${url}:${lineNo}:${columnNo}</p>
+                        <button onclick="this.parentElement.parentElement.style.display='none'">Dismiss</button>
+                    </div>
+                `;
+                errorContainer.style.display = 'block';
+            }
+            return false;
+        };
+    </script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="toolbar">
+            <div class="logo">Monaco Web IDE</div>
+            <div class="controls">
+                <select id="language-select">
+                    <option value="java">Java</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="typescript">TypeScript</option>
+                    <option value="python">Python</option>
+                    <option value="csharp">C#</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                </select>
+                <button id="theme-toggle">Toggle Theme</button>
+                <button id="format-code">Format Code</button>
+                <button id="restart-lsp" title="Restart Language Server">Restart LSP</button>
+            </div>
+        </header>
+        <main class="editor-container">
+            <div class="sidebar">
+                <div class="file-explorer">
+                    <h3>Files</h3>
+                    <ul id="file-list">
+                        <li class="file active" data-file="Main.java">Main.java</li>
+                        <li class="file" data-file="Example.js">Example.js</li>
+                        <li class="file" data-file="style.css">style.css</li>
+                        <li class="file" data-file="script.py">script.py</li>
+                    </ul>
+                </div>
+                <div class="lsp-status-panel">
+                    <h3>Language Server Status</h3>
+                    <div id="lsp-details">
+                        <div class="status-item">
+                            <span class="label">Server:</span>
+                            <span id="lsp-server-name">Not connected</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">Status:</span>
+                            <span id="lsp-status" class="lsp-disconnected">Disconnected</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">Last Error:</span>
+                            <span id="lsp-last-error">None</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="editor-wrapper">
+                <div id="monaco-editor"></div>
+                <div id="error-container" style="display: none;"></div>
+            </div>
+        </main>
+        <footer class="status-bar">
+            <div class="status-item">Ready</div>
+            <div class="status-item">Ln: <span id="line-number">1</span>, Col: <span id="column-number">1</span></div>
+            <div class="status-item" id="current-language">Java</div>
+            <div class="status-item" id="lsp-status">LSP: Disconnected</div>
+            <div class="status-item" id="lsp-server-name">Not connected</div>
+            <div class="status-item error-item" id="lsp-last-error"></div>
+            <div class="status-item"><button id="restart-lsp" title="Restart Language Server">Restart LSP</button></div>
+            <div class="status-item" id="status-message"></div>
+        </footer>
+    </div>
+
+    <!-- Error handling template -->
+    <template id="error-template">
+        <div class="error-message">
+            <h3>Error</h3>
+            <p class="error-content"></p>
+            <div class="error-actions">
+                <button class="dismiss-error">Dismiss</button>
+                <button class="retry-action">Retry</button>
+            </div>
+        </div>
+    </template>
+
+    <!-- Sample code templates -->
+    <script type="text/template" id="java-template">
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}
+    </script>
+    
+    <script type="text/template" id="javascript-template">
+function greet(name) {
+    return `Hello, ${name}!`;
+}
+
+console.log(greet('World'));
+    </script>
+    
+    <script type="text/template" id="python-template">
+def greet(name):
+    """
+    A simple greeting function.
+    
+    Args:
+        name (str): The name to greet
+        
+    Returns:
+        str: A greeting message
+    """
+    return f"Hello, {name}!"
+
+if __name__ == "__main__":
+    print(greet("World"))
+    </script>
+    
+    <script type="text/template" id="css-template">
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+    </script>
+
+    <!-- Load our scripts -->
+    <script src="js/lsp/lsp-client.js"></script>
+    <!-- Removed reference to broken PythonLSPConnector.js -->
+    <script src="js/SimplePythonLSPConnector.js"></script>
+    <script src="js/ConfigurationManager.js"></script>
+    <script src="js/JavaLSPConnector.js"></script>
+    <script src="js/FixedJavaLSPConnector.js"></script>
+    <script src="js/SimpleLSPConnector.js"></script>
+    <script src="js/EnhancedJavaCompletion.js"></script>
+    <script src="js/JavaFeaturesDiagnostics.js"></script>
+    <script src="js/ConnectionDiagnostics.js"></script>
+    <script src="js/ContextAwareJavaCompletion.js"></script>
+    <script src="js/EnhancedJavaIntelliSense.js"></script>
+    <!-- Advanced Java IntelliSense System -->
+    <script src="js/JavaTypeSystem.js"></script>
+    <script src="js/JavaTypeInference.js"></script>
+    <script src="js/JavaUniversalAutocomplete.js"></script>
+    <script src="js/ComprehensiveJavaIntelliSense.js"></script>
+    <!-- Advanced Java Editor Enhancements -->
+    <script src="js/AdvancedJavaSnippets.js"></script>
+    <script src="js/EnhancedJavaSyntaxHighlighting.js"></script>
+    <script src="js/JavaInlineDocumentation.js"></script>
+    <script src="js/lsp/java-lsp-adapter.js"></script>
+    <script src="js/lsp/lsp-connector.js"></script>
+    <script src="js/snippets/java-snippets.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Add Monaco Editor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js"></script>
+    
+    <!-- No duplicate configuration needed as it's already defined at the top -->
+</body>
+</html>

@@ -1,0 +1,4 @@
+2025-05-19 14:27:23,659 - pyls_websocket - INFO - Starting Python Language Server...
+2025-05-19 14:27:23,665 - pyls_websocket - INFO - Python Language Server started with PID: 25668
+2025-05-19 14:27:23,699 - pyls_websocket - INFO - LSP reader task cancelled
+2025-05-19 14:27:23,700 - pyls_websocket - ERROR - Unhandled exception: [Errno 10048] error while attempting to bind on address ('127.0.0.1', 2087): [winerror 10048] only one usage of each socket address (protocol/network address/port) is normally permitted

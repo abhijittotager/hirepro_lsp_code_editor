@@ -1,0 +1,207 @@
+:root {
+  --background-color: #ffffff;
+  --text-color: #333333;
+  --sidebar-bg: #f3f3f3;
+  --toolbar-bg: #007acc;
+  --toolbar-text: white;
+  --active-item-bg: #e8e8e8;
+  --border-color: #d0d0d0;
+  --hover-color: #e0e0e0;
+  --status-bar-bg: #0066b8;
+  --status-bar-text: white;
+  --lsp-connected-color: #4CAF50;
+  --lsp-disconnected-color: #F44336;
+}
+
+.dark-theme {
+  --background-color: #1e1e1e;
+  --text-color: #d4d4d4;
+  --sidebar-bg: #252526;
+  --toolbar-bg: #333333;
+  --toolbar-text: #cccccc;
+  --active-item-bg: #37373d;
+  --border-color: #454545;
+  --hover-color: #3c3c3c;
+  --status-bar-bg: #007acc;
+  --status-bar-text: #ffffff;
+  --lsp-connected-color: #4CAF50;
+  --lsp-disconnected-color: #F44336;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 15px;
+  background-color: var(--toolbar-bg);
+  color: var(--toolbar-text);
+  height: 40px;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.controls select,
+.controls button {
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  background-color: transparent;
+  color: var(--toolbar-text);
+  cursor: pointer;
+}
+
+.controls button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+main.editor-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+}
+
+.file-explorer {
+  padding: 10px;
+}
+
+.file-explorer h3 {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+
+#file-list {
+  list-style: none;
+}
+
+.file {
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-bottom: 2px;
+}
+
+.file:hover {
+  background-color: var(--hover-color);
+}
+
+.file.active {
+  background-color: var(--active-item-bg);
+  font-weight: bold;
+}
+
+#editor-wrapper {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+#monaco-editor {
+  width: 100%;
+  height: 100%;
+}
+
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 25px;
+  background-color: var(--status-bar-bg);
+  color: var(--status-bar-text);
+  padding: 0 15px;
+  font-size: 0.8rem;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
+}
+
+/* Status message types */
+.status-info {
+  /* Default style is already defined */
+}
+
+.status-error {
+  background-color: rgba(255, 0, 0, 0.7);
+  color: white;
+  font-weight: bold;
+}
+
+.status-warning {
+  background-color: rgba(255, 165, 0, 0.7);
+  color: white;
+  font-weight: bold;
+}
+
+/* LSP status styles */
+.lsp-connected {
+  color: var(--lsp-connected-color);
+  font-weight: bold;
+}
+
+.lsp-disconnected {
+  color: var(--lsp-disconnected-color);
+  font-weight: bold;
+}
+
+.error-item {
+  color: var(--lsp-disconnected-color);
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#restart-lsp {
+  background-color: var(--toolbar-bg);
+  color: var(--toolbar-text);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+#restart-lsp:hover {
+  background-color: var(--hover-color);
+}
